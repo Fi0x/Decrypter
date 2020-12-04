@@ -2,7 +2,7 @@
 name: Bug report
 about: Inform about a bug in the current version
 title: New Bug Report
-labels: bug
+labels: "⚠️ bug ⚠️"
 assignees: Fi0x
 
 ---
