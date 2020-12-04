@@ -6,8 +6,10 @@ import com.fi0x.decrypter.userinteraction.Out;
 import com.fi0x.decrypter.util.enums.CIPHER;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
-public class DecryptionHandler
+public class DecryptionHandler extends Observable
 {
     private static DecryptionHandler instance;
 
@@ -16,14 +18,21 @@ public class DecryptionHandler
 
     private final ArrayList<CIPHER> ciphers;
     ArrayList<Thread> threads;
+    private int running;
 
     private DecryptionHandler()
     {
         decryptedVersions = new ArrayList<>();
         ciphers = new ArrayList<>();
         threads = new ArrayList<>();
+        running = 0;
     }
-
+    public static DecryptionHandler getInstance(Observer observer)
+    {
+        if(instance == null) instance = new DecryptionHandler();
+        instance.addObserver(observer);
+        return instance;
+    }
     public static DecryptionHandler getInstance()
     {
         if(instance == null) instance = new DecryptionHandler();
@@ -60,12 +69,28 @@ public class DecryptionHandler
     {
         ciphers.clear();
         decryptedVersions.clear();
+        running = 0;
+    }
+
+    public void addRunning()
+    {
+        running++;
+        setChanged();
+        notifyObservers(running);
+    }
+    public void removeRunning()
+    {
+        running--;
+        if(running < 0) running = 0;
+        setChanged();
+        notifyObservers(running);
     }
 
     private void startCaesar()
     {
         Thread t = new Thread(new Caesar());
         t.start();
+        addRunning();
         threads.add(t);
         Out.newBuilder("Caesar Thread created").verbose().print();
     }
@@ -73,6 +98,7 @@ public class DecryptionHandler
     {
         Thread t = new Thread(new Skytale());
         t.start();
+        addRunning();
         threads.add(t);
         Out.newBuilder("Skytale Thread created").verbose().print();
     }

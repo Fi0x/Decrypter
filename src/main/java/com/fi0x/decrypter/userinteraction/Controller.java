@@ -7,10 +7,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-public class Controller
+import java.util.Observable;
+import java.util.Observer;
+
+public class Controller implements Observer
 {
     private int currentResult;
-    DecryptionHandler decrypter = DecryptionHandler.getInstance();
+    private final DecryptionHandler decrypter = DecryptionHandler.getInstance(this);
 
     @FXML
     private TextField input;
@@ -19,9 +22,9 @@ public class Controller
     @FXML
     private CheckBox skytale;
     @FXML
-    public Label caesarRunning;
+    private TextField possibleDecryptions;
     @FXML
-    public Label skytaleRunning;
+    private Label running;
     @FXML
     private TextField result;
 
@@ -45,12 +48,13 @@ public class Controller
             currentResult = -1;
 
             input.clear();
+            result.clear();
         }
     }
     @FXML
     private void cancel()
     {
-        DecryptionHandler.getInstance().stopDecryption();
+        decrypter.stopDecryption();
     }
     @FXML
     private void showResult()
@@ -62,5 +66,13 @@ public class Controller
             if(currentResult >= decrypter.getDecryptedVersionCount() || currentResult < 0) currentResult = 0;
             result.setText((currentResult + 1) + ")" + decrypter.getDecryptedVersion(currentResult));
         }
+    }
+    @Override
+    public void update(Observable o, Object running)
+    {
+        this.running.setVisible((int) running > 0);
+        this.running.setText("running");
+
+        possibleDecryptions.setText("" + decrypter.getDecryptedVersionCount());//TODO: Fix occasional error
     }
 }
