@@ -46,7 +46,7 @@ public class Caesar implements Runnable
         Out.newBuilder("Caesar decryption finished").verbose().ALERT().print();
     }
 
-    private void loadAlphabet()//TODO: Finish
+    private void loadAlphabet()
     {
         URL url = getClass().getClassLoader().getResource(Variables.alphabetFile);
         if(url == null)
