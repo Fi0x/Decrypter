@@ -1,18 +1,22 @@
 package com.fi0x.decrypter;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class Main extends Application
 {
     @Override
-    public void start(Stage primaryStage) throws Exception
+    public void start(Stage primaryStage) throws IOException
     {
-        GridPane root = new GridPane();
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
+
         primaryStage.setTitle("Decryption Program");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
