@@ -18,6 +18,7 @@ public class Out
     private boolean veryVerbose;
 
     private String text;
+    private String origin;
     private String color;
 
     private Out()
@@ -29,28 +30,34 @@ public class Out
     {
         Out out = new Out();
         out.text = message;
+        out.origin = null;
         out.color = WHITE;
         return out;
     }
+    public Out origin(String className)
+    {
+        origin = className;
+        return this;
+    }
 
-    public Out always(boolean state)
+    public Out always()
     {
-        always = state;
+        always = true;
         return this;
     }
-    public Out debug(boolean state)
+    public Out debug()
     {
-        debug = state;
+        debug = true;
         return this;
     }
-    public Out verbose(boolean state)
+    public Out verbose()
     {
-        verbose = state;
+        verbose = true;
         return this;
     }
-    public Out veryVerbose(boolean state)
+    public Out veryVerbose()
     {
-        veryVerbose = state;
+        veryVerbose = true;
         return this;
     }
 
@@ -79,6 +86,10 @@ public class Out
         if(verbose && (v || vv)) allowed = true;
         if(veryVerbose && vv) allowed = true;
 
-        if(allowed) System.out.println(color + text + RESET);
+        if(allowed)
+        {
+            if(origin == null) System.out.println(color + text + RESET);
+            else System.out.println(origin + ":\t\t" + color + text + RESET);
+        }
     }
 }

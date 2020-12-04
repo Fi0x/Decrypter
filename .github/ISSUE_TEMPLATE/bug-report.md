@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Bug Report
 about: Inform about a bug in the current version
 title: New Bug Report
 labels: "⚠️ bug ⚠️"
