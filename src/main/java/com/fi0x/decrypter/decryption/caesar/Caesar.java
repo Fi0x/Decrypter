@@ -38,11 +38,13 @@ public class Caesar implements Runnable
                 if(Thread.interrupted())
                 {
                     Out.newBuilder("Caesar decryption interrupted").verbose().WARNING().print();
+                    handler.removeRunning();
                     return;
                 }
             } while(shifted[0] != alphabet[0]);
         }
 
+        handler.removeRunning();
         Out.newBuilder("Caesar decryption finished").verbose().ALERT().print();
     }
 
