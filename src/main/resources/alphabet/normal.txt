@@ -1,0 +1,5 @@
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+ÄÖÜ
+äöü
+0123456789
