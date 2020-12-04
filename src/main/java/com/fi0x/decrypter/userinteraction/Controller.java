@@ -1,5 +1,6 @@
 package com.fi0x.decrypter.userinteraction;
 
+import com.fi0x.decrypter.decryption.DecryptionHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -11,12 +12,13 @@ public class Controller
     @FXML
     private void start()
     {
-        //TODO: Add function
-        System.out.println("String to decrypt: " + input.getText());
+        DecryptionHandler.getInstance().setEncryptedString(input.getText());
+        //TODO: Selection of decryption methods
+        DecryptionHandler.getInstance().startDecryption();
     }
     @FXML
     private void cancel()
     {
-        //TODO: Add function
+        DecryptionHandler.getInstance().stopDecryption();
     }
 }
