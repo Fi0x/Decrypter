@@ -28,18 +28,24 @@ public class Controller
     @FXML
     private void start()
     {
-        Out.newBuilder("Resetting decrypter").verbose().print();
-        decrypter.resetHandler();
+        if(input.getText().isEmpty())
+        {
+            Out.newBuilder("No input to decrypt").always().WARNING().print();
+        } else
+        {
+            Out.newBuilder("Resetting decrypter").verbose().print();
+            decrypter.resetHandler();
 
-        Out.newBuilder("Starting decryption").veryVerbose().print();
-        decrypter.setEncryptedString(input.getText());
-        if(caesar.isSelected()) decrypter.addCipherToCheck(CIPHER.CAESAR);
-        if(skytale.isSelected()) decrypter.addCipherToCheck(CIPHER.SKYTALE);
+            Out.newBuilder("Starting decryption").veryVerbose().print();
+            decrypter.setEncryptedString(input.getText());
+            if(caesar.isSelected()) decrypter.addCipherToCheck(CIPHER.CAESAR);
+            if(skytale.isSelected()) decrypter.addCipherToCheck(CIPHER.SKYTALE);
 
-        decrypter.startDecryption();
-        currentResult = -1;
+            decrypter.startDecryption();
+            currentResult = -1;
 
-        input.clear();
+            input.clear();
+        }
     }
     @FXML
     private void cancel()

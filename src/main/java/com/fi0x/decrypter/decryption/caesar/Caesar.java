@@ -2,54 +2,92 @@ package com.fi0x.decrypter.decryption.caesar;
 
 import com.fi0x.decrypter.decryption.DecryptionHandler;
 import com.fi0x.decrypter.userinteraction.Out;
+import com.fi0x.decrypter.util.Variables;
 import com.fi0x.decrypter.util.enums.CIPHER;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Caesar implements Runnable
 {
-    private final char[] alphabet;
-    private final char[] shifted;
+    private final ArrayList<char[]> alphabetList;
 
-    public Caesar()//TODO: Implement alphabet from file
+    public Caesar()
     {
-        alphabet = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        shifted = alphabet.clone();
+        alphabetList = new ArrayList<>();
     }
 
     @Override
     public void run()
     {
         DecryptionHandler handler = DecryptionHandler.getInstance();
-        do
+        Out.newBuilder("Loading caesar alphabet").verbose().print();
+        loadAlphabet();
+
+        for(char[] alphabet : alphabetList)
         {
-            StringBuilder decrypted1 = new StringBuilder();
-            for(char character : DecryptionHandler.getInstance().getEncryptedString().toCharArray())
+            char[] shifted = alphabet.clone();
+            do
             {
-                for(int i = 0; i < alphabet.length; i++)
-                {
-                    if(character == alphabet[i])
-                    {
-                        decrypted1.append(shifted[i]);
-                        break;
-                    }
-                }
+                handler.addDecryptedVersion(CIPHER.CAESAR, decrypt(alphabet, shifted));
+                Out.newBuilder("New caesar decryption added").veryVerbose().print();
+                shiftAlphabet(shifted);
+
                 if(Thread.interrupted())
                 {
                     Out.newBuilder("Caesar decryption interrupted").verbose().WARNING().print();
                     return;
                 }
-            }
+            } while(shifted[0] != alphabet[0]);
+        }
 
-            handler.addDecryptedVersion(CIPHER.CAESAR, decrypted1.toString());
-            shiftAlphabet();
-            Out.newBuilder("New caesar variant added").veryVerbose().print();
-        } while(shifted[0] != alphabet[0]);
         Out.newBuilder("Caesar decryption finished").verbose().ALERT().print();
     }
 
-    private void shiftAlphabet()
+    private void loadAlphabet()//TODO: Finish
     {
-        char tmp = shifted[0];
-        System.arraycopy(shifted, 1, shifted, 0, shifted.length - 1);
-        shifted[shifted.length - 1] = tmp;
+        URL url = getClass().getClassLoader().getResource(Variables.alphabetFile);
+        if(url == null)
+        {
+            alphabetList.add(new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'});
+            Out.newBuilder("Failed to load alphabet file. Falling back to default").debug().print();
+            return;
+        }
+        try
+        {
+            Scanner scanner = new Scanner(new File(url.toURI()));
+            while(scanner.hasNextLine())
+            {
+                alphabetList.add(scanner.nextLine().toCharArray());
+            }
+        } catch(Exception ignored)
+        {
+        }
+        Out.newBuilder("Alphabet file loaded").verbose().print();
+    }
+
+    private void shiftAlphabet(char[] arrayToShift)
+    {
+        char tmp = arrayToShift[0];
+        System.arraycopy(arrayToShift, 1, arrayToShift, 0, arrayToShift.length - 1);
+        arrayToShift[arrayToShift.length - 1] = tmp;
+    }
+    private String decrypt(char[] alphabet, char[] shifted)
+    {
+        StringBuilder decrypted = new StringBuilder();
+        for(char character : DecryptionHandler.getInstance().getEncryptedString().toCharArray())
+        {
+            for(int i = 0; i < alphabet.length; i++)
+            {
+                if(character == alphabet[i])
+                {
+                    decrypted.append(shifted[i]);
+                    break;
+                }
+            }
+        }
+        return decrypted.toString();
     }
 }

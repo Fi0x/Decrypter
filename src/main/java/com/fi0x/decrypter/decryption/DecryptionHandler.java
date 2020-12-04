@@ -87,7 +87,7 @@ public class DecryptionHandler
     }
     public void addDecryptedVersion(CIPHER cipher, String decryptedText)
     {
-        decryptedVersions.add(cipher + ": " + decryptedText);
+        if(decryptedText != null && !decryptedText.isEmpty()) decryptedVersions.add(cipher + ": " + decryptedText);
     }
     public String getDecryptedVersion(int index)
     {
