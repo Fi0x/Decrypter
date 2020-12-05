@@ -48,12 +48,12 @@
             <Font size="16.0" />
          </font>
       </Button>
-      <TextField id="currentDecryption" fx:id="currentDecryption" layoutX="14.0" layoutY="336.0" prefHeight="25.0" prefWidth="75.0" />
+      <TextField id="currentDecryption" fx:id="currentDecryption" layoutX="14.0" layoutY="336.0" prefHeight="25.0" prefWidth="75.0" text="0" />
       <Label layoutX="97.0" layoutY="336.0" text="/">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <TextField id="possibleDecryptions" fx:id="possibleDecryptions" editable="false" layoutX="110.0" layoutY="336.0" mouseTransparent="true" prefHeight="25.0" prefWidth="75.0" />
+      <TextField id="possibleDecryptions" fx:id="possibleDecryptions" editable="false" layoutX="110.0" layoutY="336.0" mouseTransparent="true" prefHeight="25.0" prefWidth="75.0" text="0" />
     </Pane>
 </AnchorPane>
