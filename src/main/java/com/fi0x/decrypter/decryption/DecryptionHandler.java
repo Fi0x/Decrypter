@@ -4,18 +4,18 @@ import com.fi0x.decrypter.decryption.caesar.Caesar;
 import com.fi0x.decrypter.decryption.skytale.Skytale;
 import com.fi0x.decrypter.userinteraction.Out;
 import com.fi0x.decrypter.util.enums.CIPHER;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
-public class DecryptionHandler extends Observable
+public class DecryptionHandler
 {
     private static DecryptionHandler instance;
 
     private String encryptedString;
     private final ArrayList<String> decryptedVersions;
-    private int count;
+    private final IntegerProperty count;
 
     private final ArrayList<CIPHER> ciphers;
     ArrayList<Thread> threads;
@@ -24,18 +24,10 @@ public class DecryptionHandler extends Observable
     private DecryptionHandler()
     {
         decryptedVersions = new ArrayList<>();
-        count = 0;
-        setChanged();
-        notifyObservers(count);
+        count = new SimpleIntegerProperty(0);
         ciphers = new ArrayList<>();
         threads = new ArrayList<>();
         running = 0;
-    }
-    public static DecryptionHandler getInstance(Observer observer)
-    {
-        if(instance == null) instance = new DecryptionHandler();
-        instance.addObserver(observer);
-        return instance;
     }
     public static DecryptionHandler getInstance()
     {
@@ -73,9 +65,7 @@ public class DecryptionHandler extends Observable
     {
         ciphers.clear();
         decryptedVersions.clear();
-        count = 0;
-        setChanged();
-        notifyObservers(count);
+        count.set(0);
         running = 0;
     }
 
@@ -121,17 +111,15 @@ public class DecryptionHandler extends Observable
         if(decryptedText != null && !decryptedText.isEmpty())
         {
             decryptedVersions.add(decryptedText);
-            count++;
-            setChanged();
-            notifyObservers(count);
+            count.set(count.get() + 1);
         }
     }
     public String getDecryptedVersion(int index)
     {
-        if(index >= count) return null;
+        if(index >= count.get()) return null;
         return decryptedVersions.get(index);
     }
-    public int getDecryptedVersionsCount()
+    public IntegerProperty getDecryptedVersionsCount()
     {
         return count;
     }

@@ -9,13 +9,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.util.converter.NumberStringConverter;
 
-import java.util.Observable;
-import java.util.Observer;
-
-public class Controller implements Observer
+public class Controller
 {
     private final IntegerProperty currentResult = new SimpleIntegerProperty();
-    private final DecryptionHandler decrypter = DecryptionHandler.getInstance(this);
+    private final DecryptionHandler decrypter = DecryptionHandler.getInstance();
 
     @FXML
     private TextField input;
@@ -34,9 +31,8 @@ public class Controller implements Observer
     public void initialize()
     {
         currentDecryption.textProperty().bindBidirectional(currentResult, new NumberStringConverter());
-        //TODO: Bind fields without creating exceptions
-//        possibleDecryptions.textProperty().bindBidirectional(decrypter.getDecryptedVersionCount(), new NumberStringConverter());
-//        possibleDecryptions.textProperty().bind(decrypter.getDecryptedVersionCount().asString());
+        //TODO: Bind field without creating exceptions
+//        possibleDecryptions.textProperty().bind(decrypter.getDecryptedVersionsCount().asString());
     }
 
     @FXML
@@ -70,17 +66,12 @@ public class Controller implements Observer
     @FXML
     private void showNextResult()
     {
-        if(decrypter.getDecryptedVersionsCount() == 0) result.setText("No solution found yet");
+        if(decrypter.getDecryptedVersionsCount().get() == 0) result.setText("No solution found yet");
         else
         {
             currentResult.set(currentResult.get() + 1);
-            if(currentResult.get() > decrypter.getDecryptedVersionsCount() || currentResult.get() < 0) currentResult.set(0);
-            result.setText(decrypter.getDecryptedVersion(currentResult.get() - 1));
+            if(currentResult.get() > decrypter.getDecryptedVersionsCount().get() || currentResult.get() < 1) currentResult.set(1);
+            if(currentResult.get() != 0) result.setText(decrypter.getDecryptedVersion(currentResult.get() - 1));
         }
-    }
-    @Override
-    public void update(Observable o, Object found)
-    {
-        possibleDecryptions.setText(String.valueOf((int) found));
     }
 }
