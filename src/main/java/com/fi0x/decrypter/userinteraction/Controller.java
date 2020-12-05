@@ -2,17 +2,19 @@ package com.fi0x.decrypter.userinteraction;
 
 import com.fi0x.decrypter.decryption.DecryptionHandler;
 import com.fi0x.decrypter.util.enums.CIPHER;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.converter.NumberStringConverter;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public class Controller implements Observer
 {
-    private int currentResult;
+    private final IntegerProperty currentResult = new SimpleIntegerProperty();
     private final DecryptionHandler decrypter = DecryptionHandler.getInstance(this);
 
     @FXML
@@ -22,11 +24,20 @@ public class Controller implements Observer
     @FXML
     private CheckBox skytale;
     @FXML
+    private TextField currentDecryption;
+    @FXML
     private TextField possibleDecryptions;
     @FXML
-    private Label running;
-    @FXML
     private TextField result;
+
+    @FXML
+    public void initialize()
+    {
+        currentDecryption.textProperty().bindBidirectional(currentResult, new NumberStringConverter());
+        //TODO: Bind fields without creating exceptions
+//        possibleDecryptions.textProperty().bindBidirectional(decrypter.getDecryptedVersionCount(), new NumberStringConverter());
+//        possibleDecryptions.textProperty().bind(decrypter.getDecryptedVersionCount().asString());
+    }
 
     @FXML
     private void start()
@@ -45,7 +56,7 @@ public class Controller implements Observer
             if(skytale.isSelected()) decrypter.addCipherToCheck(CIPHER.SKYTALE);
 
             decrypter.startDecryption();
-            currentResult = -1;
+            currentResult.set(0);
 
             input.clear();
             result.clear();
@@ -57,22 +68,19 @@ public class Controller implements Observer
         decrypter.stopDecryption();
     }
     @FXML
-    private void showResult()
+    private void showNextResult()
     {
-        if(decrypter.getDecryptedVersionCount() == 0) result.setText("No solution found yet");
+        if(decrypter.getDecryptedVersionsCount() == 0) result.setText("No solution found yet");
         else
         {
-            currentResult++;
-            if(currentResult >= decrypter.getDecryptedVersionCount() || currentResult < 0) currentResult = 0;
-            result.setText((currentResult + 1) + ")" + decrypter.getDecryptedVersion(currentResult));
+            currentResult.set(currentResult.get() + 1);
+            if(currentResult.get() > decrypter.getDecryptedVersionsCount() || currentResult.get() < 0) currentResult.set(0);
+            result.setText(decrypter.getDecryptedVersion(currentResult.get() - 1));
         }
     }
     @Override
-    public void update(Observable o, Object running)
+    public void update(Observable o, Object found)
     {
-        this.running.setVisible((int) running > 0);
-        this.running.setText("running");
-
-        possibleDecryptions.setText("" + decrypter.getDecryptedVersionCount());//TODO: Fix occasional error
+        possibleDecryptions.setText(String.valueOf((int) found));
     }
 }

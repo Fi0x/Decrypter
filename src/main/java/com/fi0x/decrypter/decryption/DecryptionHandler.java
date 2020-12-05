@@ -15,6 +15,7 @@ public class DecryptionHandler extends Observable
 
     private String encryptedString;
     private final ArrayList<String> decryptedVersions;
+    private int count;
 
     private final ArrayList<CIPHER> ciphers;
     ArrayList<Thread> threads;
@@ -23,6 +24,9 @@ public class DecryptionHandler extends Observable
     private DecryptionHandler()
     {
         decryptedVersions = new ArrayList<>();
+        count = 0;
+        setChanged();
+        notifyObservers(count);
         ciphers = new ArrayList<>();
         threads = new ArrayList<>();
         running = 0;
@@ -69,21 +73,22 @@ public class DecryptionHandler extends Observable
     {
         ciphers.clear();
         decryptedVersions.clear();
+        count = 0;
+        setChanged();
+        notifyObservers(count);
         running = 0;
     }
 
     public void addRunning()
     {
         running++;
-        setChanged();
-        notifyObservers(running);
+        Out.newBuilder("Running decrypters: " + running).verbose().print();
     }
     public void removeRunning()
     {
         running--;
         if(running < 0) running = 0;
-        setChanged();
-        notifyObservers(running);
+        Out.newBuilder("Running decrypters: " + running).verbose().print();
     }
 
     private void startCaesar()
@@ -111,17 +116,23 @@ public class DecryptionHandler extends Observable
     {
         this.encryptedString = input;
     }
-    public void addDecryptedVersion(CIPHER cipher, String decryptedText)
+    public void addDecryptedVersion(String decryptedText)
     {
-        if(decryptedText != null && !decryptedText.isEmpty()) decryptedVersions.add(cipher + ": " + decryptedText);
+        if(decryptedText != null && !decryptedText.isEmpty())
+        {
+            decryptedVersions.add(decryptedText);
+            count++;
+            setChanged();
+            notifyObservers(count);
+        }
     }
     public String getDecryptedVersion(int index)
     {
-        if(index >= getDecryptedVersionCount()) return null;
+        if(index >= count) return null;
         return decryptedVersions.get(index);
     }
-    public int getDecryptedVersionCount()
+    public int getDecryptedVersionsCount()
     {
-        return decryptedVersions.size();
+        return count;
     }
 }

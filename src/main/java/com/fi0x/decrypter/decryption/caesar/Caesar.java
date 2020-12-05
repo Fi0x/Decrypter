@@ -3,7 +3,6 @@ package com.fi0x.decrypter.decryption.caesar;
 import com.fi0x.decrypter.decryption.DecryptionHandler;
 import com.fi0x.decrypter.userinteraction.Out;
 import com.fi0x.decrypter.util.Variables;
-import com.fi0x.decrypter.util.enums.CIPHER;
 
 import java.io.File;
 import java.net.URL;
@@ -31,7 +30,7 @@ public class Caesar implements Runnable
             char[] shifted = alphabet.clone();
             do
             {
-                handler.addDecryptedVersion(CIPHER.CAESAR, decrypt(alphabet, shifted));
+                handler.addDecryptedVersion(decrypt(alphabet, shifted));
                 Out.newBuilder("New caesar decryption added").veryVerbose().print();
                 shiftAlphabet(shifted);
 
