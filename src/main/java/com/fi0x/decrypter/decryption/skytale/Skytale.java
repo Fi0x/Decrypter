@@ -1,6 +1,7 @@
 package com.fi0x.decrypter.decryption.skytale;
 
 import com.fi0x.decrypter.decryption.DecryptionHandler;
+import com.fi0x.decrypter.userinteraction.Out;
 import com.fi0x.decrypter.util.enums.CIPHER;
 
 public class Skytale implements Runnable
@@ -15,9 +16,18 @@ public class Skytale implements Runnable
         for(int i = 1; i < encrypted.length; i++)
         {
             handler.addDecryptedVersion(CIPHER.SKYTALE, decrypt(i));
+            Out.newBuilder("New skytale decryption added").veryVerbose().print();
+
+            if(Thread.interrupted())
+            {
+                Out.newBuilder("Skytale decryption interrupted").verbose().WARNING().print();
+                handler.removeRunning();
+                return;
+            }
         }
 
         handler.removeRunning();
+        Out.newBuilder("Skytale decryption finished").verbose().ALERT().print();
     }
 
     private String decrypt(int rows)
